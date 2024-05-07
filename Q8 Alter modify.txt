@@ -1,0 +1,28 @@
+-- Creating tables
+CREATE TABLE Users (
+    UserID INT PRIMARY KEY,
+    UserName VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE Orders (
+    OrderID INT PRIMARY KEY,
+    UserID INT,
+    OrderDate DATE,
+    FOREIGN KEY (UserID) REFERENCES Users(UserID)
+);
+
+-- Altering tables
+-- Add a new column to the Users table
+ALTER TABLE Users
+ADD Email VARCHAR(100);
+
+-- Modify the data type of an existing column in the Orders table
+ALTER TABLE Orders
+MODIFY OrderDate DATETIME;
+
+-- Dropping tables
+-- Drop the Orders table
+DROP TABLE Orders;
+
+-- Drop the Users table
+DROP TABLE Users;

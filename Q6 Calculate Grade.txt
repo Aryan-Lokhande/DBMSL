@@ -1,0 +1,45 @@
+-- Create table to store student details
+CREATE TABLE Student (
+    RollNo INT PRIMARY KEY,
+    Name VARCHAR(50),
+    Subject1Marks INT,
+    Subject2Marks INT,
+    Subject3Marks INT,
+    Subject4Marks INT,
+    Subject5Marks INT
+);
+
+DELIMITER //
+CREATE FUNCTION CalculateGrade(student_rollno INT)
+RETURNS VARCHAR(2)
+BEGIN
+    DECLARE total_marks INT;
+    DECLARE average_marks DECIMAL(5,2);
+    DECLARE grade VARCHAR(2);
+    
+    -- Calculate total marks of the student
+    SELECT (Subject1Marks + Subject2Marks + Subject3Marks + Subject4Marks + Subject5Marks) INTO total_marks
+    FROM Student
+    WHERE RollNo = student_rollno;
+    
+    -- Calculate average marks
+    SET average_marks = total_marks / 5;
+    
+    -- Assign grade based on average marks
+    IF average_marks >= 90 THEN
+        SET grade = 'A+';
+    ELSEIF average_marks >= 80 THEN
+        SET grade = 'A';
+    ELSEIF average_marks >= 70 THEN
+        SET grade = 'B';
+    ELSEIF average_marks >= 60 THEN
+        SET grade = 'C';
+    ELSEIF average_marks >= 50 THEN
+        SET grade = 'D';
+    ELSE
+        SET grade = 'F';
+    END IF;
+    
+    RETURN grade;
+END //
+DELIMITER ;

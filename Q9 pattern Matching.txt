@@ -1,0 +1,23 @@
+/* Alright, let's imagine a simple database with two tables: employees and salaries.
+employees:
+- id (INT, PRIMARY KEY)
+- name (VARCHAR)
+- department (VARCHAR)
+- position (VARCHAR)
+
+salaries:
+- employee_id (INT, FOREIGN KEY referencing employees.id)
+- salary_amount (DECIMAL)
+- currency (VARCHAR)
+- date_paid (DATE) 
+*/
+
+-- 1.Pattern Matching:Query to select employees whose names start with 'J'
+SELECT * FROM employees WHERE name LIKE 'J%';
+
+-- 2.Arithmetic Operations and Built-in Functions:Query to calculate the average salary
+SELECT AVG(salary_amount) AS average_salary FROM salaries;
+
+-- Query to calculate the total salary paid in USD
+SELECT SUM(salary_amount) AS total_salary_usd FROM salaries WHERE currency = 'USD';
+

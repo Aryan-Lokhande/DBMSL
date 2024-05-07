@@ -1,0 +1,128 @@
+-- Creating tables with appropriate integrity constraints
+CREATE TABLE Customer (
+    cust_no INTEGER PRIMARY KEY,
+    cust_name VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE Membership (
+    mem_no INTEGER PRIMARY KEY,
+    cust_no INTEGER,
+    FOREIGN KEY (cust_no) REFERENCES Customer(cust_no)
+);
+
+CREATE TABLE Cassette (
+    cass_no INTEGER PRIMARY KEY,
+    cass_name VARCHAR(255) NOT NULL,
+    Language VARCHAR(50)
+);
+
+CREATE TABLE Iss_rec (
+    iss_no INTEGER PRIMARY KEY,
+    iss_date DATE,
+    mem_no INTEGER,
+    cass_no INTEGER,
+    FOREIGN KEY (mem_no) REFERENCES Membership(mem_no),
+    FOREIGN KEY (cass_no) REFERENCES Cassette(cass_no)
+);
+
+-- Inserting around 10 records in each of the tables
+INSERT INTO Customer (cust_no, cust_name) VALUES
+(1, 'John Doe'),
+(2, 'Jane Smith'),
+(3, 'Alice Johnson'),
+(4, 'Bob Brown'),
+(5, 'Emily Davis'),
+(6, 'Michael Wilson'),
+(7, 'Sarah Garcia'),
+(8, 'David Martinez'),
+(9, 'Olivia Anderson'),
+(10, 'James Taylor');
+
+INSERT INTO Membership (mem_no, cust_no) VALUES
+(1, 1),
+(2, 2),
+(3, 3),
+(4, 4),
+(5, 5),
+(6, 6),
+(7, 7),
+(8, 8),
+(9, 9),
+(10, 10);
+
+INSERT INTO Cassette (cass_no, cass_name, Language) VALUES
+(1, 'The Legend', 'English'),
+(2, 'Action Hero', 'Spanish'),
+(3, 'Romantic Night', 'French'),
+(4, 'Sci-Fi Adventure', 'German'),
+(5, 'Comedy Central', 'English'),
+(6, 'Thriller Zone', 'Spanish'),
+(7, 'Drama Fest', 'French'),
+(8, 'Fantasy World', 'German'),
+(9, 'Family Fun', 'English'),
+(10, 'Mystery Mansion', 'Spanish');
+
+INSERT INTO Iss_rec (iss_no, iss_date, mem_no, cass_no) VALUES
+(1, '2024-05-06', 1, 1),
+(2, '2024-05-06', 2, 2),
+(3, '2024-05-06', 3, 3),
+(4, '2024-05-06', 4, 4),
+(5, '2024-05-06', 5, 5),
+(6, '2024-05-06', 6, 6),
+(7, '2024-05-06', 7, 7),
+(8, '2024-05-06', 8, 8),
+(9, '2024-05-06', 9, 9),
+(10, '2024-05-06', 10, 10);
+
+-- List all the customer names with their membership numbers
+SELECT c.cust_name, m.mem_no
+FROM Customer c
+JOIN Membership m ON c.cust_no = m.cust_no;
+
+-- List all the issues for the current date with the customer names and cassette names
+SELECT c.cust_name, cas.cass_name
+FROM Iss_rec i
+JOIN Membership m ON i.mem_no = m.mem_no
+JOIN Customer c ON m.cust_no = c.cust_no
+JOIN Cassette cas ON i.cass_no = cas.cass_no
+WHERE i.iss_date = CURRENT_DATE;
+
+-- List the details of the customer who has borrowed the cassette whose title is “The Legend”
+SELECT c.*
+FROM Customer c
+JOIN Membership m ON c.cust_no = m.cust_no
+JOIN Iss_rec i ON m.mem_no = i.mem_no
+JOIN Cassette cas ON i.cass_no = cas.cass_no
+WHERE cas.cass_name = 'The Legend';
+
+-- Give a count of how many cassettes have been borrowed by each customer
+SELECT c.cust_name, COUNT(*) AS cassette_count
+FROM Customer c
+JOIN Membership m ON c.cust_no = m.cust_no
+JOIN Iss_rec i ON m.mem_no = i.mem_no
+GROUP BY c.cust_name;
+
+-- Give a list of cassettes taken by the student with mem_no as 5
+SELECT cas.*
+FROM Cassette cas
+JOIN Iss_rec i ON cas.cass_no = i.cass_no
+WHERE i.mem_no = 5;
+
+-- List the cassettes issues for today
+SELECT *
+FROM Iss_rec
+WHERE iss_date = CURRENT_DATE;
+
+-- Create a view which lists out the iss_no, iss_date, cust_name, cass_name
+CREATE VIEW IssueDetails AS
+SELECT i.iss_no, i.iss_date, c.cust_name, cas.cass_name
+FROM Iss_rec i
+JOIN Membership m ON i.mem_no = m.mem_no
+JOIN Customer c ON m.cust_no = c.cust_no
+JOIN Cassette cas ON i.cass_no = cas.cass_no;
+
+-- Create a view which lists issues-date wise for the last one week
+CREATE VIEW IssuesLastWeek AS
+SELECT *
+FROM Iss_rec
+WHERE iss_date BETWEEN DATE_SUB(CURRENT_DATE, INTERVAL 1 WEEK) AND CURRENT_DATE;
